@@ -14,7 +14,7 @@
 ## Installation
 * **Pre-requisites:** JDK 1.8, Maven, Tomcat 9, Curl
 * **Build:** Clone the repo, change to ```app``` directory and run ```mvn clean install```
-* **Deploy:** Copy ```app/target/applause.war``` to tomcat's ```webapps``` directory
+* **Deploy:** Copy ```app/target/applause.war``` to tomcat's ```webapps``` directory and start tomcat server.
 * **Running examples:** Run the rest calls listed in the following section.  You can also execute ```RunExamples.bat``` or ```RunExamples.sh```.
 
 ## REST calls and their responses
