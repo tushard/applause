@@ -1,4 +1,23 @@
-##Various REST calls and their responses
+# REST service to manage testers, devices, and bugs
+
+## Design and implementation
+* **Prototype using SQL:** Each of the data files testers.csv, devices.csv, testers_devices.csv, and bugs.csv correspond to a table.  So, I created four tables: Testers, Devices, TesterDevice, and Bug.  The reputation for testers in a specific countries with access to specific devices can be found using sql select query that uses joins, groupby, and orderby.  The prototype helped me obtain test data for the REST service implementation.
+* **REST service**: I decide to implement REST service, because it allows us to support both command line tools as well as user interface (UI).  Both command line tools and the UI would call the REST service to interact with the database.
+  * **Create data model using Apache Cayenne:** [Apache Cayenne](https://cayenne.apache.org/) is an open source Java object-to-relational (ORM) mapping framework.  Cayenne is distributed with CayenneModeler - a complete GUI mapping tool that supports editing object-relational mapping projects, generation of Java source code for the persistent objects and other functions.  Using CayenneModeler, I created data model for Tester, Device, TesterDevice, and Bug tables.  Then, I used code-generation feature of Cayenne to produce Java code for my data model.
+  * **Data importer module:** Wrote data importer using Cayenne query api to import data from csv files into the database.  The importer is called whenever the rest service is deployed on a web container.  The data from csv file is loaded into Apache derby in-memory database.
+  * **CRUD REST service using Agrest:** [Agrest](https://agrest.io) is an open-source framework for building REST APIs for Data Stores.  It uses Apache Cayenne as the ORM provider out-of-box.  Agrest simplified implementation of REST resources that can be used to create and query various entities such as Testers and Devices.
+  * **Write specialized REST resources for handling complex operations**
+    * **Create TesterDevice:** An http post call that accepts testerId and deviceId as json.  It verifies if both tester and devices are valid and exist in the database.  If yes, then it adds a new Testerdevice entry to the database.
+    * **Create Bug:** An http post call that accepts bugId, testerId, and deviceId as json.  It verifies if both tester and device are valid.  It also verifies that the tester has access to the device, i.e., there exists an entry in TesterDevice entity for the tester and device received as arguments.
+    * **List testers according to their reputation**: An http post call that accepts list of countries and list of devcices as json.  We can also use keywords ALL for both countries and devices.  Since, this is a search query, http get would have been the right choice to implement it.  However, I experienced some challenges while passing lists as query parameters.  I tried passing list as ```?country=US&country=JP&country=GB```.  However, tomcat seemed to pass value of the first country parameter alone to the REST resources.  Implementing reputation query as get request would have posed another challenge too.  The maximum size of htp get requets is 2048 bytes.  Although number of countries is limited to around 200, the number of devices can be very high.  So, it is likely that if we pass list of countries and list of devices as query parameters, then it would exceed the max length of the http get query.  The size of http post can be, however, as high as 4GB.   Therefore, I implemented the reputation query as http post query.
+
+## Installation
+* **Pre-requisites:** JDK 1.8, Maven, Tomcat 9
+* **Build:** Clone the repo and run ```mvn clean install```
+* **Deploy:** Copy ```app/target/applause.war``` to tomcat's ```webapps``` directory
+* **Running examples:** Run the rest calls listed in the following section
+
+## REST calls and their responses
 
 **1) Get tester reputation with Country="ALL" and Device="iPhone 4"**
 ```
@@ -183,3 +202,7 @@ Connection: close
 
 {"success":false,"message":"Tester or device is unknown"}
 ```
+## ToDo
+* Improve validation of imput parameters of post calls to check for null or empty json data.
+* Build REST client in various languages, such as Java, python, perl, to simplify calling the REST services.
+* Build UI.
