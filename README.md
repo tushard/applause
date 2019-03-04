@@ -12,7 +12,7 @@
     * **List testers according to their reputation**: An http post call that accepts list of countries and list of devcices as json.  We can also use keywords ALL for both countries and devices.  Since, this is a search query, http get would have been the right choice to implement it.  However, I experienced some challenges while passing lists as query parameters.  I tried passing list as ```?country=US&country=JP&country=GB```.  However, tomcat seemed to pass value of the first country parameter alone to the REST resources.  Implementing reputation query as get request would have posed another challenge too.  The maximum size of htp get requets is 2048 bytes.  Although number of countries is limited to around 200, the number of devices can be very high.  So, it is likely that if we pass list of countries and list of devices as query parameters, then it would exceed the max length of the http get query.  The size of http post can be, however, as high as 4GB.   Therefore, I implemented the reputation query as http post query.
 
 ## Installation
-* **Pre-requisites:** JDK 1.8, Maven, Tomcat 9
+* **Pre-requisites:** JDK 1.8, Maven, Tomcat 9, Curl
 * **Build:** Clone the repo, change to ```app``` directory and run ```mvn clean install```
 * **Deploy:** Copy ```app/target/applause.war``` to tomcat's ```webapps``` directory
 * **Running examples:** Run the rest calls listed in the following section.  You can also execute ```RunExamples.bat``` or ```RunExamples.sh```.
