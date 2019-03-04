@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-map xmlns="http://cayenne.apache.org/schema/9/modelMap"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://cayenne.apache.org/schema/9/modelMap https://cayenne.apache.org/schema/9/modelMap.xsd"
+	 project-version="9">
+	<property name="defaultPackage" value="com.applause.cloudsource.app.persistent"/>
+	<db-entity name="Bug">
+		<db-attribute name="bugId" type="VARCHAR" isMandatory="true" length="20"/>
+		<db-attribute name="deviceId" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="testerId" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="Device">
+		<db-attribute name="description" type="VARCHAR" isMandatory="true" length="50"/>
+		<db-attribute name="deviceId" type="VARCHAR" isMandatory="true" length="20"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<db-entity name="Tester">
+		<db-attribute name="country" type="VARCHAR" isMandatory="true" length="2"/>
+		<db-attribute name="firstName" type="VARCHAR" isMandatory="true" length="200"/>
+		<db-attribute name="id" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="lastLogin" type="DATE"/>
+		<db-attribute name="lastName" type="VARCHAR" isMandatory="true" length="200"/>
+		<db-attribute name="testerId" type="VARCHAR" isMandatory="true" length="20"/>
+	</db-entity>
+	<db-entity name="TesterDevice">
+		<db-attribute name="deviceId" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+		<db-attribute name="testerId" type="INTEGER" isPrimaryKey="true" isMandatory="true"/>
+	</db-entity>
+	<obj-entity name="Bug" className="com.applause.cloudsource.app.persistent.Bug" dbEntityName="Bug">
+		<obj-attribute name="bugId" type="java.lang.String" db-attribute-path="bugId"/>
+	</obj-entity>
+	<obj-entity name="Device" className="com.applause.cloudsource.app.persistent.Device" dbEntityName="Device">
+		<obj-attribute name="description" type="java.lang.String" db-attribute-path="description"/>
+		<obj-attribute name="deviceId" type="java.lang.String" db-attribute-path="deviceId"/>
+	</obj-entity>
+	<obj-entity name="Tester" className="com.applause.cloudsource.app.persistent.Tester" dbEntityName="Tester">
+		<obj-attribute name="country" type="java.lang.String" db-attribute-path="country"/>
+		<obj-attribute name="firstName" type="java.lang.String" db-attribute-path="firstName"/>
+		<obj-attribute name="lastLogin" type="java.time.LocalDate" db-attribute-path="lastLogin"/>
+		<obj-attribute name="lastName" type="java.lang.String" db-attribute-path="lastName"/>
+		<obj-attribute name="testerId" type="java.lang.String" db-attribute-path="testerId"/>
+	</obj-entity>
+	<obj-entity name="TesterDevice" className="com.applause.cloudsource.app.persistent.TesterDevice" dbEntityName="TesterDevice">
+	</obj-entity>
+	<db-relationship name="device" source="Bug" target="Device" toMany="false">
+		<db-attribute-pair source="deviceId" target="id"/>
+	</db-relationship>
+	<db-relationship name="tester" source="Bug" target="Tester" toMany="false">
+		<db-attribute-pair source="testerId" target="id"/>
+	</db-relationship>
+	<db-relationship name="bugs" source="Device" target="Bug" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="deviceId"/>
+	</db-relationship>
+	<db-relationship name="testers" source="Device" target="TesterDevice" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="deviceId"/>
+	</db-relationship>
+	<db-relationship name="bugs" source="Tester" target="Bug" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="testerId"/>
+	</db-relationship>
+	<db-relationship name="devices" source="Tester" target="TesterDevice" toDependentPK="true" toMany="true">
+		<db-attribute-pair source="id" target="testerId"/>
+	</db-relationship>
+	<db-relationship name="device" source="TesterDevice" target="Device" toMany="false">
+		<db-attribute-pair source="deviceId" target="id"/>
+	</db-relationship>
+	<db-relationship name="tester" source="TesterDevice" target="Tester" toMany="false">
+		<db-attribute-pair source="testerId" target="id"/>
+	</db-relationship>
+	<obj-relationship name="device" source="Bug" target="Device" deleteRule="Nullify" db-relationship-path="device"/>
+	<obj-relationship name="tester" source="Bug" target="Tester" deleteRule="Nullify" db-relationship-path="tester"/>
+	<obj-relationship name="testers" source="Device" target="TesterDevice" deleteRule="Deny" db-relationship-path="testers"/>
+	<obj-relationship name="devices" source="Tester" target="TesterDevice" deleteRule="Deny" db-relationship-path="devices"/>
+	<obj-relationship name="device" source="TesterDevice" target="Device" deleteRule="Nullify" db-relationship-path="device"/>
+	<obj-relationship name="tester" source="TesterDevice" target="Tester" deleteRule="Nullify" db-relationship-path="tester"/>
+</data-map>
