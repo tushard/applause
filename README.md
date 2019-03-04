@@ -1,7 +1,7 @@
 # REST service to manage testers, devices, and bugs
 
 ## Design and implementation
-* **Prototype using SQL:** Each of the data files testers.csv, devices.csv, testers_devices.csv, and bugs.csv correspond to a table.  So, I created four tables: Testers, Devices, TesterDevice, and Bug.  The reputation for testers in a specific countries with access to specific devices can be found using sql select query that uses joins, groupby, and orderby.  The prototype helped me obtain test data for the REST service implementation.
+* **Prototype using SQL:** Each of the data files testers.csv, devices.csv, testers_devices.csv, and bugs.csv correspond to a table.  So, I created four tables: Testers, Devices, TesterDevice, and Bug.  The reputation for testers in a specific countries with access to specific devices can be found using sql select query that uses joins, groupby, and orderby.  The prototype helped me obtain test data for the REST service implementation.  The sql scripts that I used can be found in ```sql``` directory.
 * **REST service**: I decide to implement REST service, because it allows us to support both command line tools as well as user interface (UI).  Both command line tools and the UI would call the REST service to interact with the database.
   * **Create data model using Apache Cayenne:** [Apache Cayenne](https://cayenne.apache.org/) is an open source Java object-to-relational (ORM) mapping framework.  Cayenne is distributed with CayenneModeler - a complete GUI mapping tool that supports editing object-relational mapping projects, generation of Java source code for the persistent objects and other functions.  Using CayenneModeler, I created data model for Tester, Device, TesterDevice, and Bug tables.  Then, I used code-generation feature of Cayenne to produce Java code for my data model.
   * **Data importer module:** Wrote data importer using Cayenne query api to import data from csv files into the database.  The importer is called whenever the rest service is deployed on a web container.  The data from csv file is loaded into Apache derby in-memory database.
@@ -13,7 +13,7 @@
 
 ## Installation
 * **Pre-requisites:** JDK 1.8, Maven, Tomcat 9
-* **Build:** Clone the repo and run ```mvn clean install```
+* **Build:** Clone the repo, change to ```app``` directory and run ```mvn clean install```
 * **Deploy:** Copy ```app/target/applause.war``` to tomcat's ```webapps``` directory
 * **Running examples:** Run the rest calls listed in the following section
 
